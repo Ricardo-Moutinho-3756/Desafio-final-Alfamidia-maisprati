@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Desafio Alfamidia</title>
+
+	<script>
+		class Aluno {
+			
+			constructor() {
+				this.arrayAlunos = [];
+				this.id = 1;
+			}
+
+			criarAluno() {
+
+				let aluno = this.lerDadosAluno();
+				let data = new Date(aluno.dataNas);
+				aluno.dataNas = data.toLocaleDateString("pt-br", {timeZone: "UTC"});
+
+				if (this.validarDados(aluno)) {
+
+					if (this.cadastrarAluno(aluno) == false) {
+						return;
+					}
+				}else {
+					return;
+				}
+
+				this.exibeTabela();
+				this.limpar();
+ 		    	alert("Aluno cadastrado com exito.");			
+			}
+
+			lerDadosAluno() {
+
+				let aluno = {}
+				aluno.id = this.id;
+				aluno.nomealuno = document.getElementById("aluno").value;
+				aluno.tele = document.getElementById("telefone").value;
+				aluno.dataNas = document.getElementById("nascimento").value;
+				aluno.notFinal = document.getElementById("notaFinal").value;
+				return aluno;
+			}
+
+			validarDados(aluno) {
+
+				let msgerro = "";
+
+				if (aluno.nomealuno == "") {
+					msgerro += "Nome aluno esta em branco ! \n";
+				}
+				if (aluno.tele == "") {
+					msgerro += "Telefone esta em branco ! \n";
+				}
+				if (aluno.dataNas == "") {
+					msgerro += "Data Nascimento esta em branco ! \n";
+				}
+				if (aluno.notFinal == "") {
+					msgerro += "Nota Final esta em branco. \n";
+				}else {
+				}
+				if (msgerro != "") {
+					alert(msgerro);
+					return false;
+				}
+				let niver = new Date(aluno.dataNas);
+				let idade = Math.floor((Date.now() - niver) / (31557600000));
+				if (idade < 15 || idade > 80) {
+					msgerro += "Idade " + idade + " anos é incompativél.";
+					alert(msgerro);
+					return false;
+				}
+				if (aluno.notFinal < 0 || aluno.notFinal > 10) {
+					msgerro += "Nota Final deve ser um inteiro de 0 à 10.";
+					alert(msgerro);
+					return false;
+				}
+				return true;
+			}
+
+			cadastrarAluno(aluno) {
+
+				if (this.arrayAlunos.length > 0) {
+	  				for (let i = 0; i < this.arrayAlunos.length; i++) {
+	    				if (aluno.nomealuno == this.arrayAlunos[i].nomealuno) {
+		      				alert("Aluno  '" + aluno.nomealuno + "'  já esta cadastrado !");
+		      				return false;
+				    	}
+  					}
+				}
+
+				this.arrayAlunos.push(aluno);
+				this.id++;
+				return true;
+
+			}
+
+			exibeTabela() {
+
+				let tbody = document.getElementById("tbody");
+				tbody.innerText = "";
+
+				for (let i = 0; i < this.arrayAlunos.length; i++) {
+					let tr = tbody.insertRow();
+					let td_id = tr.insertCell();
+					let td_nome = tr.insertCell();
+					let td_tele = tr.insertCell();
+					let td_datna = tr.insertCell();
+					let td_nofi = tr.insertCell();
+					let td_excl = tr.insertCell();
+					td_id.innerText = this.arrayAlunos[i].id;
+					td_nome.innerText = this.arrayAlunos[i].nomealuno;
+					td_tele.innerText = this.arrayAlunos[i].tele;
+					td_datna.innerText = this.arrayAlunos[i].dataNas;
+					td_nofi.innerText = this.arrayAlunos[i].notFinal;
+ 		        	let lixeira = document.createElement("img");
+ 		        	lixeira.src = "delete.png";
+ 		        	td_excl.appendChild(lixeira);
+ 		        	lixeira.setAttribute("onClick", "aluno.excluir("+this.arrayAlunos[i].id+")");
+ 		    	}
+			}
+
+			limpar() {
+				document.getElementById("aluno").value ="";
+				document.getElementById("telefone").value ="";
+				document.getElementById("nascimento").value ="";
+				document.getElementById("notaFinal").value ="";
+			}
+
+			excluir(id) {
+
+				let tbody = document.getElementById("tbody");
+
+				for(let i = 0; i < this.arrayAlunos.length; i++) {
+					if(this.arrayAlunos[i].id == id) {
+						this.arrayAlunos.splice(i, 1);
+						tbody.deleteRow(i);
+					}
+				}
+
+				alert("atualiza lista");				
+				tbody.innerText = "";				
+
+				this.arrayNovo = [];
+				this.id = 1;
+				for(let i = 0; i < this.arrayAlunos.length; i++) {
+					let u = {id:this.id, nomealuno:this.arrayAlunos[i].nomealuno, tele:this.arrayAlunos[i].tele, dataNas:this.arrayAlunos[i].dataNas, notFinal:this.arrayAlunos[i].notFinal};
+					this.arrayNovo[i] = u;
+					this.id++;
+				}
+				this.arrayAlunos = this.arrayNovo;
+				this.exibeTabela();								
+			}
+
+		}
+
+		var aluno = new Aluno();
+
+	</script>
+
+</head>
+<body>
+	<div class = cadast style="width:50%;float:left">
+		<img src="maispti.png" width="100" height="50">
+		<h2>Cadastro de Alunos</h2>
+		
+		<div>
+            <span>Nome aluno:</span>
+            <input id="aluno" maxlength="30">
+		</div><br>
+		<div>
+			<span>Telefone:</span>
+            <input type="tel" id="telefone" maxlength="11">
+		</div><br>
+		<div>
+			<span>Data Nascimento:</span>
+            <input type="date" id="nascimento">
+		</div><br>
+		<div>
+			<span>Nota Final:</span>
+            <input type="number" id="notaFinal" maxlength="2">
+		</div>
+		<div>
+			<br><button onclick="aluno.criarAluno()" type="submit">Cadastrar Aluno</button>
+		</div>
+	</div>
+
+	<div class = rela style="width:50%;float:right">
+			<h2>Alunos Cadastrados:</h2>
+
+		<div class="tabela">
+			<table id="tabelaAlunos" cellpadding="8">
+				<thead>
+					<tr>
+						<td>Ordem</td>
+						<td>Nome</td>
+						<td>Telefone</td>
+						<td>D. Nascimento</td>
+						<td id="nota">Nota Final</td>
+						<td class="exclu">Excluir</td>
+					</tr>
+				</thead>
+				<tbody id="tbody">
+
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</body>
+</html>
